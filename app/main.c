@@ -2,36 +2,24 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
+#include "../src/lab.h"
 
 
 int main(int argc, char **argv)
 {
-  printf("hello world\n");
-  int c;
+  int opt;
 
-  while((c = getopt (argc, argv, "abc:")) != -1) {
-    switch(c)
-    {
-      case 'a':
-        printf("get a here");
-        break;
-      case 'b':
-        printf("get b here");
-        break;
-      case 'c':
-        printf("get c here");
-        break;
-      case '?':
-        if (isprint(optopt)){
-          fprintf(stderr, "Unknown option", optopt);
-        }else {
-          fprintf(stderr, "Unknown option", optopt);
+    // Use getopt to parse command line arguments
+    while ((opt = getopt(argc, argv, "v")) != -1) {
+        switch (opt) {
+            case 'v':
+                // Print the version and exit
+                printf("Shell version: %d.%d\n", lab_VERSION_MAJOR, lab_VERSION_MINOR);
+                exit(0);
+            default:
+                fprintf(stderr, "Usage: %s [-v]\n", argv[0]);
+                exit(EXIT_FAILURE);
         }
-      return 1;
-      default:
-        abort();
-        break;
     }
-  }
   return 0;
 }
