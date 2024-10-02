@@ -21,6 +21,14 @@ EXE_DEPS := $(EXE_OBJS:.o=.d)
 CFLAGS ?= -Wall -Wextra -fno-omit-frame-pointer -fsanitize=address -g -MMD -MP
 LDFLAGS ?= -pthread -lreadline
 
+# Detect the operating system
+UNAME_S := $(shell uname -s)
+
+# Set ASAN_OPTIONS for supported platforms
+ifeq ($(UNAME_S), Linux)
+	ASAN_OPTIONS = detect_leaks=1
+endif
+
 all: $(TARGET_EXEC) $(TARGET_TEST)
 
 $(TARGET_EXEC): $(OBJS) $(EXE_OBJS)
@@ -34,7 +42,7 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 check: $(TARGET_TEST)
-	ASAN_OPTIONS=detect_leaks=1 ./$<
+	ASAN_OPTIONS=$(ASAN_OPTIONS) ./$(TARGET_TEST)
 
 .PHONY: clean
 clean:

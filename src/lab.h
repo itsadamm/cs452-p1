@@ -15,6 +15,13 @@ extern "C"
 {
 #endif
 
+  struct background_job {
+    int job_num;
+    pid_t pid;
+    char command[256];
+    char status[10];  // "Running" or "Done"
+  };
+
   struct shell
   {
     int shell_is_interactive;
@@ -22,6 +29,8 @@ extern "C"
     struct termios shell_tmodes;
     int shell_terminal;
     char *prompt;
+    struct background_job jobs[256];
+    int job_count;
   };
 
 
@@ -119,6 +128,12 @@ extern "C"
    * @param argv The arg array
    */
   void parse_args(int argc, char **argv);
+
+  void execute_command(struct shell *sh, char *command, char *args[], int background);
+  void add_background_job(struct shell *sh, pid_t pid, char *args[]);
+  void check_background_jobs(struct shell *sh);
+  void print_jobs(struct shell *sh);
+
 
 
 

@@ -1,0 +1,67 @@
+Adam Adri
+CS 452
+Project 1 summary 
+
+In this project, I developed a custom shell in C, implementing various features to 
+mimic a Unix-like shell. Starting from Task 3, I progressively added functionalities 
+to enhance the shell's capabilities.
+
+For Task 3, the goal was to make the shell print its version when started with the -v 
+command-line argument and then exit. I used the getopt function to parse command-line 
+arguments and accessed the version numbers defined in lab.h. When the -v flag is detected, 
+the shell outputs its version and terminates.
+
+In Task 4, I focused on handling user input more effectively by incorporating the GNU 
+Readline library. This library provides advanced input handling, including line editing and 
+command history features. By including <readline/readline.h> and <readline/history.h>, I 
+set up a loop that reads input from the user, allows for line editing, and maintains a history 
+of entered commands.
+
+Task 5 involved customizing the shell prompt. The shell checks for the MY_PROMPT environment 
+variable, and if it's set, it uses its value as the prompt. If not, it defaults to a standard 
+prompt like "shell>". I used the getenv function to retrieve environment variables and set the 
+prompt accordingly, allowing users to personalize their shell experience.
+
+For Task 6, I added built-in commands to the shell, specifically exit, cd, and history. The 
+exit command terminates the shell, ensuring that all allocated memory is freed before exiting. 
+The cd command changes the current working directory, handling cases where no arguments are 
+provided by switching to the user's home directory using getenv, getuid, and getpwuid. The 
+history command displays a list of previously entered commands by leveraging the Readline 
+library's history functionality.
+
+In Task 7, I implemented the ability for the shell to execute external commands by creating new
+processes. Using fork and execvp, the shell parses the user's input into an array of arguments 
+and runs the command, searching the PATH environment variable for the executable. It also 
+handles empty inputs gracefully, displaying a new prompt without causing errors or memory leaks.
+
+Task 8 centered on signal handling. The shell ignores certain signals like SIGINT, SIGQUIT, and 
+SIGTSTP to prevent interruption from keyboard shortcuts like Ctrl+C. In child processes, these 
+signals are reset to their default behavior to allow external commands to respond appropriately 
+to user interrupts. Functions like signal, tcgetpgrp, and tcsetpgrp were used to manage signal 
+handling and control the foreground process group.
+
+For Task 9, I added support for background processes. When a command ends with an ampersand (&), 
+the shell starts the process in the background and immediately returns to the prompt without 
+waiting for the process to finish. The shell keeps track of these background jobs, assigning job 
+numbers and storing their status and command information. It checks for completed background jobs 
+whenever the user presses Enter and reports any that have finished since the last check.
+
+In Task 10, I implemented the jobs built-in command. This command displays all background jobs 
+that are currently running or have completed but haven't been reported yet. The output includes 
+the job number, process ID, status (either "Running" or "Done"), and the full command. This feature 
+helps users keep track of their background processes effectively.
+
+Throughout the project, I encountered some platform-specific issues that required me to modify the 
+Makefile. Specifically, when working on macOS (arm64), I found that AddressSanitizer's leak detection 
+(detect_leaks=1) isn't supported. To address this, I adjusted the Makefile to conditionally set 
+ASAN_OPTIONS based on the operating system. This change ensures that the build and test processes work 
+smoothly across different platforms without causing errors related to unsupported features. I used 
+chatGPT to help me with this. My prompt was “I’m having issues running a Makefile command. What is wrong 
+and how can I fix this? It won't let me run it, giving me this error: make check ASAN_OPTIONS=detect_leaks=1 
+./test-lab ==49854==AddressSanitizer: detect_leaks is not supported on this platform. make: *** [check] Abort 
+trap: 6 This is what make check runs from within the Makefile: check: $(TARGET_TEST) 	
+ASAN_OPTIONS=detect_leaks=1 ./$< ”.
+
+Overall, this project allowed me to delve deep into process management, signal handling, and user input 
+processing in C, resulting in a functional shell that supports both built-in and external commands, along 
+with background job control.
